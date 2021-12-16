@@ -1,0 +1,239 @@
+#include <iostream>
+#include <time.h>
+#include <vector>
+
+using namespace std;
+int board[9][9] = { 0 };
+vector<vector<vector<int>>> Vboard;//First num is col, second is row, third is pencils
+
+void vectors() {//set vectors 1-9
+	for (int k = 0; k < 9; k++) {
+		vector<vector<int>> v2;
+		for (int i = 0; i < 9; i++) {
+			vector<int> v1;
+			for (int j = 0; j < 9; j++) {
+				v1.push_back(j + 1);//assign 1-9 to inside vector
+			}
+			v2.push_back(v1);//assign vectors to the vector
+		}
+		Vboard.push_back(v2);
+	}
+}
+
+void rows(int col, int row, int num) {//delete pencils from affected rows
+	for (int i = 0; i < 9; i++) {//cycle through each vector for that row
+		for (int j = 0; j < Vboard[i][row].size(); j++) {//cycle through all pencil marks
+			if (Vboard[i][row][j] == num) {//if a pencil matches newly put number
+				Vboard[i][row].erase(Vboard[i][row].begin() + j);//delete that sucker
+				break;
+			}
+		}
+	}
+}
+void cols(int col, int row, int num) {//delete pencils from affected cols
+	for (int i = 0; i < 9; i++) {//cycle through each vector for that col
+		for (int j = 0; j < Vboard[col][i].size(); j++) {//cycle through all pencil marks
+			if (Vboard[col][i][j] == num) {//if a pencil matches newly put number
+				Vboard[col][i].erase(Vboard[col][i].begin() + j);//delete that sucker
+				break;
+			}
+		}
+	}
+}
+void boxes(int col, int row, int num) {//delete pencils from affected boxes
+	int box; //find the box it belongs to!
+	if (col == 0 || col == 1 || col == 2) {//first 3 cols
+		if (row == 0 || row == 1 || row == 2) {//top 3 rows
+			box = 1;
+			for (int i = 0; i < 3; i++) {//cycle thru cols
+				for (int j = 0; j < 3; j++) {//cycle thru rows
+					for (int k = 0; k < Vboard[i][j].size(); k++) {//cycle thru pencils
+						if (Vboard[i][j][k] == num) {//found it 
+							Vboard[i][j].erase(Vboard[i][j].begin() + k);//delete that sucker
+							break;
+						}
+					}
+				}
+
+			}
+		}
+		else if (row == 3 || row == 4 || row == 5) {//middle 3 rows
+			box = 4;
+			for (int i = 3; i < 6; i++) {//cycle thru cols
+				for (int j = 0; j < 3; j++) {//cycle thru rows
+					for (int k = 0; k < Vboard[i][j].size(); k++) {//cycle thru pencils
+						if (Vboard[i][j][k] == num) {//found it 
+							Vboard[i][j].erase(Vboard[i][j].begin() + k);//delete that sucker
+							break;
+						}
+					}
+				}
+
+			}
+		}
+		else {//bottom 3 rows
+			box = 7;
+			for (int i = 6; i < 9; i++) {//cycle thru cols
+				for (int j = 0; j < 3; j++) {//cycle thru rows
+					for (int k = 0; k < Vboard[i][j].size(); k++) {//cycle thru pencils
+						if (Vboard[i][j][k] == num) {//found it 
+							Vboard[i][j].erase(Vboard[i][j].begin() + k);//delete that sucker
+							break;
+						}
+					}
+				}
+
+			}
+		}
+	}
+	else if (col == 3 || col == 4 || col == 5) {//middle 3 cols
+		if (row == 0 || row == 1 || row == 2) {//top 3 rows
+			box = 2;
+			for (int i = 0; i < 3; i++) {//cycle thru cols
+				for (int j = 3; j < 6; j++) {//cycle thru rows
+					for (int k = 0; k < Vboard[i][j].size(); k++) {//cycle thru pencils
+						if (Vboard[i][j][k] == num) {//found it 
+							Vboard[i][j].erase(Vboard[i][j].begin() + k);//delete that sucker
+							break;
+						}
+					}
+				}
+
+			}
+		}
+		else if (row == 3 || row == 4 || row == 5) {//middle 3 rows
+			box = 5;
+			for (int i = 3; i < 6; i++) {//cycle thru cols
+				for (int j = 3; j < 6; j++) {//cycle thru rows
+					for (int k = 0; k < Vboard[i][j].size(); k++) {//cycle thru pencils
+						if (Vboard[i][j][k] == num) {//found it 
+							Vboard[i][j].erase(Vboard[i][j].begin() + k);//delete that sucker
+							break;
+						}
+					}
+				}
+
+			}
+		}
+		else {//bottom 3 rows
+			box = 8;
+			for (int i = 6; i < 9; i++) {//cycle thru cols
+				for (int j = 3; j < 6; j++) {//cycle thru rows
+					for (int k = 0; k < Vboard[i][j].size(); k++) {//cycle thru pencils
+						if (Vboard[i][j][k] == num) {//found it 
+							Vboard[i][j].erase(Vboard[i][j].begin() + k);//delete that sucker
+							break;
+						}
+					}
+				}
+
+			}
+		}
+	}
+	else {//last 3 cols
+		if (row == 0 || row == 1 || row == 2) {//top 3 rows
+			box = 3;
+			for (int i = 0; i < 3; i++) {//cycle thru cols
+				for (int j = 6; j < 9; j++) {//cycle thru rows
+					for (int k = 0; k < Vboard[i][j].size(); k++) {//cycle thru pencils
+						if (Vboard[i][j][k] == num) {//found it 
+							Vboard[i][j].erase(Vboard[i][j].begin() + k);//delete that sucker
+							break;
+						}
+					}
+				}
+
+			}
+		}
+		else if (row == 3 || row == 4 || row == 5) {//middle 3 rows
+			box = 6;
+			for (int i = 6; i < 9; i++) {//cycle thru cols
+				for (int j = 6; j < 9; j++) {//cycle thru rows
+					for (int k = 0; k < Vboard[i][j].size(); k++) {//cycle thru pencils
+						if (Vboard[i][j][k] == num) {//found it 
+							Vboard[i][j].erase(Vboard[i][j].begin() + k);//delete that sucker
+							break;
+						}
+					}
+				}
+
+			}
+		}
+		else {//bottom 3 rows
+			box = 9;
+			for (int i = 6; i < 9; i++) {//cycle thru cols
+				for (int j = 6; j < 9; j++) {//cycle thru rows
+					for (int k = 0; k < Vboard[i][j].size(); k++) {//cycle thru pencils
+						if (Vboard[i][j][k] == num) {//found it 
+							Vboard[i][j].erase(Vboard[i][j].begin() + k);//delete that sucker
+							break;
+						}
+					}
+				}
+
+			}
+		}
+	}
+}
+
+void print() {//print gameboard
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			cout << board[i][j] << " ";//output number
+			if ((j + 1) % 3 == 0) {//every 3rd coloum create extra space
+				cout << " ";
+			}
+		}
+		cout << endl;//create new row
+		if ((i + 1) % 3 == 0) {//every 3rd row create extra row
+			cout << endl;
+		}
+	}
+}
+
+void number() {//start in square 1 and pick random number, after that remove 1 from all affected squares. Repeat 2-81
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			cout << "size: " << Vboard[i][j].size() << endl;
+			int random = rand() % (Vboard[i][j].size());
+			board[i][j] = Vboard[i][j][random];
+			rows(i,j,board[i][j]);
+			cols(i, j, board[i][j]);
+			boxes(i, j, board[i][j]);
+			print();
+		}
+	}
+}
+
+void move() {//takes player move
+	int row = 0;
+	int col = 0;
+	int num = 0;
+	cout << "Please enter a row, column and number to replace with:";
+	cin >> row >> col >> num;
+	if (0 > num || num > 9) {
+		cout << "That number is invalid. Please enter a new number:";
+		cin >> num;
+	}
+	if (0 > row || row > 9) {
+		cout << "That row is invalid. Please enter a new row:";
+		cin >> num;
+	}
+	if (0 > col || col > 9) {
+		cout << "That column is invalid. Please enter a new number:";
+		cin >> num;
+	}
+	board[col - 1][row - 1] = num;
+}
+
+int main() {
+	srand(time(NULL));
+	cout << "Welcome to the Sudoku board generator\n";
+	vectors();
+	number();
+	print();
+	//move();
+//level of difficulty
+	system("pause");
+	return 0;
+}
