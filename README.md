@@ -11,6 +11,8 @@ I added a reset function for when it hits that snag.
 Basically it resets all the values, both the board array and 3D vector.
 Update of December 20th, Currently in Isolation.
 The board will create, play and when it detecs that all spaces are filled (AKA no 0s) in the board. It will go through the solve process and give you a mistake.
-Next goal is to add a exit, reset, and solution button.
+Next goal is to add a exit, reset, and solution button
+Wow those were easy to add.
+As far as I see this is a completed game and have had a blast creating it
 There is enough comments for anyone to follow.
 I am so happy it works!.
