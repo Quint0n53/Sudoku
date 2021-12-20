@@ -6,6 +6,7 @@
 
 using namespace std;
 int board[9][9] = { 0 };
+int SolvedBoard[9][9] = { 0 };
 int LockBoard[9][9] = { 0 };
 vector<vector<vector<int>>> Vboard;//First num is col, second is row, third is pencils
 
@@ -70,8 +71,8 @@ void boxes(int col, int row, int num) {//delete pencils from affected boxes
 	}
 }
 void print() {//print gameboard
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
+	for (int i = 0; i < 9; i++) {//cols
+		for (int j = 0; j < 9; j++) {//rows
 			cout << board[i][j] << " ";//output number
 			if ((j + 1) % 3 == 0) {//every 3rd coloum create extra space
 				cout << " ";
@@ -83,47 +84,93 @@ void print() {//print gameboard
 		}
 	}
 }
-void move() {//takes player move
-	int row = 0;
+void move() {//takes player move..somehow I totally switched row and column in this function and dont have the will to go back and figure it out
+	int row = 0;//reset every time to avoid confusion
 	int col = 0;
 	int num = 0;
+	cout << "At any moment, if you wish no longer play enter these numbers for the ROW and enter anything else for column and number\n99 = Quit\n88 = Solution\n77 = Reset board\n";
 	cout << "Please enter a column, row and number to replace with(in that order (C R N)):";
 	cin >> row >> col >> num;
-	for (;;) {
-		if (0 > num || num > 9) {
-			cout << "That number is invalid. Please enter a new number:";
-			cin >> num;
+	if (row > 70) {//assistive moves
+		if (row == 99) {//quit
+			exit(EXIT_FAILURE);
 		}
-		else if (0 > row || row > 9) {
-			cout << "That row is invalid. Please enter a new row:";
-			cin >> row;
+		else if (row == 88) {//show solution board and end game
+			cout << "Your board:\n";
+			for (int i = 0; i < 9; i++) {
+				for (int j = 0; j < 9; j++) {
+					cout << board[i][j] << " ";//output number
+					if ((j + 1) % 3 == 0) {//every 3rd coloum create extra space
+						cout << " ";
+					}
+				}
+				cout << endl;//create new row
+				if ((i + 1) % 3 == 0) {//every 3rd row create extra row
+					cout << endl;
+				}
+			}
+			cout << "Solution Board:\n";
+			for (int i = 0; i < 9; i++) {
+				for (int j = 0; j < 9; j++) {
+					cout << SolvedBoard[i][j] << " ";//output number
+					if ((j + 1) % 3 == 0) {//every 3rd coloum create extra space
+						cout << " ";
+					}
+				}
+				cout << endl;//create new row
+				if ((i + 1) % 3 == 0) {//every 3rd row create extra row
+					cout << endl;
+				}
+			}
+			exit(EXIT_FAILURE);//end game
 		}
-		else if (0 > col || col > 9) {
-			cout << "That column is invalid. Please enter a new number:";
-			cin >> col;
-		}
-		else if (board[col - 1][row - 1] = LockBoard[col - 1][row - 1]) {
-			cout << "That number is part of the original board. Do NOT touch. Try again:";
-			cin >> row >> col >> num;
-		}
-		else {
-			break;
+		else if (row == 77) {//reset board
+			for (int i = 0; i < 9; i++) {
+				for (int j = 0; j < 9; j++) {
+					board[i][j] = LockBoard[i][j];//reset nums to locked board
+				}
+				cout << "Reset board, Continue to play as normal\n";
+				print();
+				cout << "Please enter a column, row and number to replace with(in that order (C R N)):";
+				cin >> row >> col >> num;//resume play
+			}
 		}
 	}
-	board[col - 1][row - 1] = num;
-	system("CLS");
-	print();
+		for (;;) {//check valid numbers
+			if (0 > num || num > 9) {
+				cout << "That number is invalid. Please enter a new number:";
+				cin >> num;
+			}
+			else if (0 > row || row > 9) {
+				cout << "That row is invalid. Please enter a new row:";
+				cin >> row;
+			}
+			else if (0 > col || col > 9) {
+				cout << "That column is invalid. Please enter a new number:";
+				cin >> col;
+			}
+			else if (board[col - 1][row - 1] = LockBoard[col - 1][row - 1]) {
+				cout << "That number is part of the original board. Do NOT touch. Try again:";
+				cin >> row >> col >> num;
+			}
+			else {//continue if okay
+				break;
+			}
+		}
+		board[col - 1][row - 1] = num;//change nums in board
+		system("CLS");//clear screen
+		cout << "You changed the " << col << " row and the " << row << " column to a " << num << endl;
+		print();//print new board
 }
 int number() {//start in square 1 and pick random number, after that remove 1 from all affected squares. Repeat 2-81
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
-			//cout << "size: " << Vboard[i][j].size() << endl;
 			if (Vboard[i][j].size() == 0) {//if broken restart
 				return 0;
 			}
-			int random = rand() % (Vboard[i][j].size());
-			board[i][j] = Vboard[i][j][random];
-			rows(i, j, board[i][j]);
+			int random = rand() % (Vboard[i][j].size());//find random num in the vector
+			board[i][j] = Vboard[i][j][random];//assign to printed board
+			rows(i, j, board[i][j]);///delete from all other boxes
 			cols(i, j, board[i][j]);
 			boxes(i, j, board[i][j]);
 		}
@@ -131,25 +178,25 @@ int number() {//start in square 1 and pick random number, after that remove 1 fr
 	return 1;
 }
 void vectors() {//set vectors 1-9
-	for (int k = 0; k < 9; k++) {
+	for (int k = 0; k < 9; k++) {//vector 1
 		vector<vector<int>> v2;
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 9; i++) {//vector 2
 			vector<int> v1;
-			for (int j = 0; j < 9; j++) {
+			for (int j = 0; j < 9; j++) {//vector 3
 				v1.push_back(j + 1);//assign 1-9 to inside vector
 			}
 			v2.push_back(v1);//assign vectors to the vector
 		}
-		Vboard.push_back(v2);
+		Vboard.push_back(v2);//assign vector of vectors to vector
 	}
 }
 void reset() {
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
-			board[i][j] = 0;
+	for (int i = 0; i < 9; i++) {//cols
+		for (int j = 0; j < 9; j++) {//rows			
+			board[i][j] = 0;//zero out the array
 		}
 	}
-	Vboard.erase(Vboard.begin(), Vboard.begin() + Vboard.size());
+	Vboard.erase(Vboard.begin(), Vboard.begin() + Vboard.size());//clean the entire 3d vector
 }
 void create() {
 	for(;;) {
@@ -165,6 +212,11 @@ void create() {
 }
 void difficulty(int hide) {
 	int remove;
+	for (int i = 0; i < 9; i++) {//before edits hold one version of solve
+		for (int j = 0; j < 9; j++) {
+			SolvedBoard[i][j] = board[i][j];
+		}
+	}
 	for (;;) {
 		if (hide == 1) {//easy
 			remove = 24;
@@ -209,20 +261,10 @@ int full() {//If no 0s then begin solve process
 	}
 	return 1;//if all are ones, begin solve
 }
-void clear(char fill = ' ') {
-	COORD tl = { 0,0 };
-	CONSOLE_SCREEN_BUFFER_INFO s;
-	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-	GetConsoleScreenBufferInfo(console, &s);
-	DWORD written, cells = s.dwSize.X * s.dwSize.Y;
-	FillConsoleOutputCharacter(console, fill, cells, tl, &written);
-	FillConsoleOutputAttribute(console, s.wAttributes, cells, tl, &written);
-	SetConsoleCursorPosition(console, tl);
-}
 int solve() {//solves for any board, it solves independantly of the original board. Hoping it would "catch" any mistakes
 	for (int i = 0; i < 9; i++) {//cycle through all numbers of the board
 		for (int j = 0; j < 9; j++) {
-			int number = board[i][j];
+			int number = board[i][j];//create variable of current number to check
 			for (int k = 0; k < 9; k++) {//check col
 				if (k == i) {//if its the same as current box, skip
 					continue;
@@ -285,8 +327,8 @@ int solve() {//solves for any board, it solves independantly of the original boa
 			}
 		}
 	}
-	cout << "Congratulations, You solved the board!\n";
-	return 0;
+	cout << "Congratulations, You solved the board!\n";//you won somehow
+	return 1;
 }
 int main() {
 	srand(time(NULL));
@@ -296,14 +338,22 @@ int main() {
 	cout << "What level of difficulty would you like?\n1 = Easy\n2 = Medium\n3 = Hard\n";
 	cin >> level;
 	difficulty(level);
-	print();
-	for (;;) {//play
-		move();
-		if (full() == 1) {
+	print();//original print
+	for (;;) {
+		for (;;) {//play keeps going until solved
+			move();
+			if (full() == 1) {//check for full board
+				break;
+			}
+		}
+		if (solve() == 0){//check for solve
+			continue;//you lose keep going
+		}
+		else {//you win
 			break;
 		}
 	}
-	solve();
+	cout << "Thank you for playing Quinton's Sudoku. I hope you have a good day!\n";
 	system("pause");
 	return 0;
 }
